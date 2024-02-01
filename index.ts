@@ -21,10 +21,10 @@ export class webToken<_Data> {
       : (process.env.WEB_TOKEN_SECRET as string);
     if (!this.secret) throw new Error("set .env SECRET=<32 Random Char>");
     this.request = request;
-    this.sessionData = this.getCookie<_Data>();
-    this.cookieName = init?.cookieName ? init.cookieName : this.cookieName;
     this.iv = process.env.WEB_TOKEN_IV || "1xD4R5TgHrRp09gF";
+    this.cookieName = init?.cookieName ? init.cookieName : this.cookieName;
     this.iv = init?.iv ? init.iv : this.iv;
+    this.sessionData = this.getCookie<_Data>();
   }
   public session() {
     return this.sessionData;
@@ -80,10 +80,14 @@ export class webToken<_Data> {
   }
 
   private decipher() {
-    return createDecipheriv(this.algorithm, this.hashedSecret(), this.iv);
+    return createDecipheriv(
+      this.algorithm,
+      this.hashedSecret(),
+      this.hashedIV()
+    );
   }
   private cipher() {
-    return createCipheriv(this.algorithm, this.hashedSecret(), this.iv);
+    return createCipheriv(this.algorithm, this.hashedSecret(), this.hashedIV());
   }
   private encodeData(data: any) {
     return btoa(encodeURI(JSON.stringify(data)));
@@ -92,9 +96,17 @@ export class webToken<_Data> {
     return JSON.parse(decodeURI(atob(data)));
   }
   private hashedSecret() {
-    return createHash("sha256")
+    const hashed = createHash("sha256")
       .update(this.secret)
       .digest("base64")
       .slice(0, 32);
+    return hashed;
+  }
+  private hashedIV() {
+    const hashed = createHash("sha256")
+      .update(this.iv)
+      .digest("base64")
+      .slice(0, 16);
+    return hashed;
   }
 }
