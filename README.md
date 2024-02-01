@@ -3,7 +3,7 @@
 ### Exemple
 
 ```TypeScript
-import { webToken } from "bunpm/json-webtoken"
+import { webToken } from "@bunpmjs/json-webtoken"
 interface _User {
   username: string;
 }
