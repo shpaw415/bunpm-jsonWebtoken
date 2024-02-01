@@ -1,9 +1,5 @@
-# json-webtoken
+import { webToken } from ".";
 
-### Exemple
-
-```TypeScript
-import { webToken } from "bunpm/"
 interface _User {
   username: string;
 }
@@ -29,9 +25,3 @@ Bun.serve({
   },
   port: 3000,
 });
-```
-
-### ENV
-
-- WEB_TOKEN_SECRET = Random 32 length String for securing the data (must be strong!)
-- WEB_TOKEN_IV = Random string for radomize encryption (more secure but not mendatory)
