@@ -24,7 +24,11 @@ export class webToken<_Data> {
     this.iv = process.env.WEB_TOKEN_IV || "1xD4R5TgHrRp09gF";
     this.cookieName = init?.cookieName ? init.cookieName : this.cookieName;
     this.iv = init?.iv ? init.iv : this.iv;
-    this.sessionData = this.getCookie<_Data>();
+    try {
+      this.sessionData = this.getCookie<_Data>();
+    } catch {
+      this.sessionData = undefined;
+    }
   }
   public session() {
     return this.sessionData;

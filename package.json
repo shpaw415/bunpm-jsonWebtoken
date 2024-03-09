@@ -1,5 +1,10 @@
 {
   "version": "0.0.21",
+  "keywords": [
+    "session",
+    "webtoken",
+    "json"
+  ],
   "name": "json-webtoken",
   "module": "index.ts",
   "type": "module",
