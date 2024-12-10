@@ -19,14 +19,16 @@ export class webToken<_Data> {
     this.secret = init?.secret
       ? init.secret
       : (process.env.WEB_TOKEN_SECRET as string);
-    if (!this.secret) throw new Error("set .env SECRET=<32 Random Char>");
+    if (!this.secret)
+      throw new Error("set .env WEB_TOKEN_SECRET=<32 Random Char>");
     this.request = request;
     this.iv = process.env.WEB_TOKEN_IV || "1xD4R5TgHrRp09gF";
     this.cookieName = init?.cookieName ? init.cookieName : this.cookieName;
     this.iv = init?.iv ? init.iv : this.iv;
     try {
       this.sessionData = this.getCookie<_Data>();
-    } catch {
+    } catch (e) {
+      //console.log(e);
       this.sessionData = undefined;
     }
   }
@@ -34,7 +36,7 @@ export class webToken<_Data> {
     return this.sessionData;
   }
   /** add or replace already setted data to the token */
-  public updateData(data: { [key: string]: any }) {}
+  public updateData(data: { [key: string]: any }) { }
   /** create or reaplce entireley the token data */
   public setData(data: { [key: string]: any }) {
     const cipher = this.cipher();
@@ -52,17 +54,15 @@ export class webToken<_Data> {
   }
   public setCookie(
     response: Response,
-    options?: { expire?: number; httpOnly: boolean; secure: boolean }
+    options?: { expire?: number; httpOnly: boolean; secure: boolean, path?: string }
   ) {
     if (!this.encryptedData)
       throw new Error("there is no data set to be send to cookie");
     response.headers.append(
       "Set-Cookie",
-      `${this.cookieName}=${this.encryptedData}; Max-Age=${
-        options?.expire || 3000
-      }; ${options?.httpOnly ? "HttpOnly='true';" : ""} ${
-        options?.secure ? "Secure='true';" : ""
-      }`
+      `${this.cookieName}=${this.encryptedData}; Max-Age=${options?.expire || 3000
+      }; ${options?.httpOnly ? "HttpOnly='true';" : ""} ${options?.secure ? "Secure='true';" : ""
+      }path=${options?.path || "/"}`
     );
     return response;
   }
